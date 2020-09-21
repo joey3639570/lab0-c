@@ -75,9 +75,6 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize);
  * Return 0 if q is NULL or empty
  */
 int q_size(queue_t *q);
-{
-    return q->size;
-}
 /*
  * Reverse elements in queue
  * No effect if q is NULL or empty
