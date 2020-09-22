@@ -92,7 +92,7 @@ bool q_insert_tail(queue_t *q, char *s)
     newh->next = NULL;
     while (*indirect)
         indirect = &(*indirect)->next;
-    *indirect = new_h;
+    *indirect = newh;
     q->size++;
     return true;
 }
@@ -153,7 +153,7 @@ void q_reverse(queue_t *q)
         list_ele_t *next = q->head->next;
         q->head->next = cursor;
         cursor = q->head;
-        q->= next;
+        q->head = next;
     }
     q->head = cursor;
 }
