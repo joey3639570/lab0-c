@@ -6,6 +6,14 @@
 #include "queue.h"
 
 /*
+ * Refer to @RinHizakura
+ * For replacing 'strcpy'
+ */
+#ifndef strlcpy
+#define strlcpy(dst, src, sz) snprintf((dst), (sz), "%s", (src))
+#endif
+
+/*
  * Create empty queue.
  * Return NULL if could not allocate space.
  */
