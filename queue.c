@@ -23,6 +23,7 @@ queue_t *q_new()
     if (q == NULL)
         return NULL;
     q->head = NULL;
+    q->tail = NULL;
     q->size = 0;
     return q;
 }
@@ -69,6 +70,9 @@ bool q_insert_head(queue_t *q, char *s)
     strlcpy(newh->value, s, (strlen(s) + 1));
     newh->next = q->head;
     q->head = newh;
+    // For the case when the queue is empty
+    if (q->size == 0)
+        q->tail = newh;
     q->size++;
     return true;
 }
@@ -82,7 +86,6 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    list_ele_t **indirect = &q->head;
     if (q == NULL)
         return false;
     list_ele_t *newh;
@@ -99,9 +102,15 @@ bool q_insert_tail(queue_t *q, char *s)
     newh->value = tmp;
     strlcpy(newh->value, s, (strlen(s) + 1));
     newh->next = NULL;
-    while (*indirect)
-        indirect = &(*indirect)->next;
-    *indirect = newh;
+
+    // Case when the queue is empty
+    if (q->size == 0) {
+        q->tail = newh;
+        q->head = newh;
+    } else {
+        q->tail->next = newh;
+        q->tail = newh;
+    }
     q->size++;
     return true;
 }
@@ -132,6 +141,10 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     free(tmp->value);
     free(tmp);
     q->size--;
+
+    // For the case when the queue is empty
+    if (q->size == 0)
+        q->tail = NULL;
     return true;
 }
 
@@ -158,12 +171,15 @@ void q_reverse(queue_t *q)
     if (q == NULL || q->head == NULL)
         return;
     list_ele_t *cursor = NULL;
+
+    q->tail = q->head;
     while (q->head) {
         list_ele_t *next = q->head->next;
         q->head->next = cursor;
         cursor = q->head;
         q->head = next;
     }
+    q->tail->next = NULL;
     q->head = cursor;
 }
 
