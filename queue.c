@@ -184,6 +184,95 @@ void q_reverse(queue_t *q)
 }
 
 /*
+ * move nodes to position, used in merge sort
+ */
+void move(list_ele_t **destRef, list_ele_t **sourceRef)
+{
+    list_ele_t *tmp = *sourceRef;
+    *sourceRef = tmp->next;
+    tmp->next = *destRef;
+    *destRef = tmp;
+}
+
+/*
+ * Split queue into groups
+ */
+void split(list_ele_t *head, list_ele_t **front_ref, list_ele_t **back_ref)
+{
+    // Case when length is less than 2
+    if (head == NULL || head->next == NULL) {
+        *front_ref = head;
+        *back_ref = NULL;
+        return;
+    }
+
+    list_ele_t *first = head;
+    list_ele_t *second = head->next;
+
+    // First goes a step, Second goes two steps.
+    // When second reach the end, first will be the mid point.
+    while (second != NULL) {
+        second = second->next;  // For the case when length is odd number.
+        if (second != NULL) {
+            first = first->next;
+            second = second->next;
+        }
+    }
+
+    *front_ref = head;
+    *back_ref = first->next;
+    first->next = NULL;
+}
+/*
+ * Merge the groups in order
+ */
+list_ele_t *merge(list_ele_t *a, list_ele_t *b)
+{
+    // Refer to RinHizakura, using dummy first node to hang the result
+    list_ele_t dummy;
+    list_ele_t *tail = &dummy;
+    dummy.next = NULL;
+
+    while (1) {
+        if (a == NULL) {
+            tail->next = b;
+            break;
+        } else if (b == NULL) {
+            tail->next = a;
+            break;
+        }
+        // strcmp, if a<b, return negative value
+        if (strcmp(a->value, b->value) < 0) {
+            move(&tail->next, &a);
+        } else {
+            move(&tail->next, &b);
+        }
+        tail = tail->next;
+    }
+    return dummy.next;
+}
+
+/*
+ * Perform merge sort
+ */
+void merge_sort(list_ele_t **head)
+{
+    if (*head == NULL || (*head)->next == NULL)
+        return;
+
+    list_ele_t *a;
+    list_ele_t *b;
+
+    split(*head, &a, &b);
+
+    merge_sort(&a);
+    merge_sort(&b);
+
+    *head = merge(a, b);
+}
+
+
+/*
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
@@ -192,6 +281,6 @@ void q_sort(queue_t *q)
 {
     if (q == NULL || q->head == NULL)
         return;
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+
+    merge_sort(&q->head);
 }

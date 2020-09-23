@@ -76,6 +76,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize);
  * Return 0 if q is NULL or empty
  */
 int q_size(queue_t *q);
+
 /*
  * Reverse elements in queue
  * No effect if q is NULL or empty
@@ -84,6 +85,26 @@ int q_size(queue_t *q);
  * It should rearrange the existing ones.
  */
 void q_reverse(queue_t *q);
+
+/*
+ * Swapping nodes position, used in merge sort
+ */
+void swap(list_ele_t **destRef, list_ele_t **sourceRef);
+
+/*
+ * Split queue into groups
+ */
+void split(list_ele_t *head, list_ele_t **front_ref, list_ele_t **back_ref);
+
+/*
+ * Merge the groups in order
+ */
+list_ele_t *merge(list_ele_t *a, list_ele_t *b);
+
+/*
+ * Perform merge sort
+ */
+void merge_sort(list_ele_t **head);
 
 /*
  * Sort elements of queue in ascending order
